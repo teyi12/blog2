@@ -1,0 +1,34 @@
+{% extends 'template_base.html' %}
+
+{% block contenu %}
+<div class="container my-5">
+    
+    <!-- Bouton retour -->
+    <a href="{% url 'articles:articles' %}" class="btn btn-outline-secondary mb-4">
+        ← Retour aux articles
+    </a>
+
+    <div class="row align-items-start">
+        <!-- Colonne image -->
+        <div class="col-md-5 mb-4">
+            <img src="{{ article.image.url }}" alt="{{ article.titre }}" class="img-fluid rounded shadow-sm">
+        </div>
+
+        <!-- Colonne texte -->
+        <div class="col-md-7">
+            <!-- Catégorie (facultatif) -->
+            {% if article.categorie %}
+                <span class="badge bg-primary mb-2">{{ article.categorie.nom }}</span>
+            {% endif %}
+
+            <h1>{{ article.titre }}</h1>
+
+            <p class="text-muted mb-2">
+                Publié le {{ article.date_publication|date:"d M Y" }}
+            </p>
+
+            <p class="lead">{{ article.contenu }}</p>
+        </div>
+    </div>
+</div>
+{% endblock %}
