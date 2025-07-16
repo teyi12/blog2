@@ -1,14 +1,15 @@
 from pathlib import Path
 import os
+import dj_database_url
+
 from dotenv import load_dotenv
 
-load_dotenv()
-SECRET_KEY = os.getenv('SECRET_KEY')
-DEBUG = os.getenv('DEBUG', 'False') == 'True'
-
-
+load_dotenv()  # charge .env
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+SECRET_KEY = os.getenv('SECRET_KEY')
+DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
 
 # Quick-start development settings - unsuitable for production
@@ -21,7 +22,8 @@ SECRET_KEY = 'django-insecure-o9&a*mb08)v1p7e9bq-lomvf6!kyo7)h-01l%@eksl@f#cbs3t
 DEBUG = True
 
 ALLOWED_HOSTS = ['www.deinedomain.com', 'deinedomain.com', '127.0.0.1', 'localhost']
-
+ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "*").split(",")
+ALLOWED_HOSTS = ['*']  # Temporairement pour Railway
 
 # Application definition
 
@@ -75,6 +77,10 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+
+# DATABASES = {
+#     'default': dj_database_url.config(conn_max_age=600)
+# }
 
 
 # Password validation
