@@ -1,0 +1,10 @@
+{
+  "build": {
+    "env": {
+      "PYTHONUNBUFFERED": "1",
+      "DJANGO_SETTINGS_MODULE": "blog.settings",
+      "DEBUG": "False"
+    }
+  },
+  "start": "python manage.py collectstatic --noinput && python manage.py migrate && gunicorn blog.wsgi:application --bind 0.0.0.0:$PORT"
+}
