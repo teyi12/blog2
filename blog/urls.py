@@ -6,7 +6,7 @@ from blog.views_auth import signup_view, profil_view
 from django.contrib.auth.views import LogoutView
 from django.conf import settings
 from django.conf.urls.static import static
-
+from . import views_auth
 from . import views
 
 urlpatterns = [
@@ -22,5 +22,6 @@ urlpatterns = [
 
     path('signup/', signup_view, name='signup'),
     path('profil/', profil_view, name='profil'),
+    path('profil/modifier/', views_auth.modifier_profil, name='modifier_profil'),
     
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -17,3 +17,22 @@ def signup_view(request):
 @login_required
 def profil_view(request):
     return render(request, 'auth/profil.html')
+
+
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, redirect
+from articles.forms import ProfilForm
+
+@login_required
+def modifier_profil(request):
+    profil = request.user.profil  # via OneToOneField
+
+    if request.method == 'POST':
+        form = ProfilForm(request.POST, request.FILES, instance=profil)
+        if form.is_valid():
+            form.save()
+            return redirect('profil')  # ou autre nom de page profil
+    else:
+        form = ProfilForm(instance=profil)
+
+    return render(request, 'modifier_profil.html', {'form': form})
