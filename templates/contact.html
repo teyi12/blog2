@@ -1,20 +1,52 @@
-
 {% extends 'template_base.html' %}
-
-{% block titre %}Page de contact{% endblock %}
+{% load static %}
 
 {% block contenu %}
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-6 mt-4">
-            <h1>Contactez-nous</h1>
-            <hr class="my-4">
-            <form action="{% url 'contact' %}" method="POST">
-                {% csrf_token %}
-                {{ form }}
-                <button type="submit" class="btn btn-danger">Envoyer</button>
-            </form>
-        </div>
+<div class="container mt-5">
+  <h2>Contactez-nous</h2>
+
+  <form method="post" novalidate>
+    {% csrf_token %}
+    
+    {% if form.non_field_errors %}
+      <div class="alert alert-danger">
+        {{ form.non_field_errors }}
+      </div>
+    {% endif %}
+
+    <div class="mb-3">
+      <label for="id_nom" class="form-label">Nom</label>
+      {{ form.nom|as_widget(attrs={"class": "form-control", "placeholder": "Votre nom"}) }}
+      {% if form.nom.errors %}
+        <div class="text-danger">{{ form.nom.errors.0 }}</div>
+      {% endif %}
     </div>
+
+    <div class="mb-3">
+      <label for="id_prenom" class="form-label">Prénom</label>
+      {{ form.prenom|as_widget(attrs={"class": "form-control", "placeholder": "Votre prénom"}) }}
+      {% if form.prenom.errors %}
+        <div class="text-danger">{{ form.prenom.errors.0 }}</div>
+      {% endif %}
+    </div>
+
+    <div class="mb-3">
+      <label for="id_email" class="form-label">Email</label>
+      {{ form.email|as_widget(attrs={"class": "form-control", "placeholder": "Votre email"}) }}
+      {% if form.email.errors %}
+        <div class="text-danger">{{ form.email.errors.0 }}</div>
+      {% endif %}
+    </div>
+
+    <div class="mb-3">
+      <label for="id_message" class="form-label">Message</label>
+      {{ form.message|as_widget(attrs={"class": "form-control", "rows": 5, "placeholder": "Votre message..."}) }}
+      {% if form.message.errors %}
+        <div class="text-danger">{{ form.message.errors.0 }}</div>
+      {% endif %}
+    </div>
+
+    <button type="submit" class="btn btn-primary">Envoyer</button>
+  </form>
 </div>
 {% endblock %}

@@ -1,19 +1,32 @@
 from django.contrib import admin
 from .models import Article, Profil
-from django.utils.html import mark_safe
+from django.utils.html import format_html
+from django.urls import reverse
+
+@admin.register(Article)
+class ArticleAdmin(admin.ModelAdmin):
+    list_display = ('titre', 'slug', 'date_publication')
+    search_fields = ('titre', 'slug')
+    list_filter = ('date_publication',)
+    prepopulated_fields = {'slug': ('titre',)}
+
 
 @admin.register(Profil)
 class ProfilAdmin(admin.ModelAdmin):
-    list_display = ('utilisateur', 'afficher_photo')  # colonnes visibles
-    list_select_related = ('utilisateur',)  # optimisation des requêtes
+    list_display = ('lien_utilisateur', 'afficher_photo')
+    list_select_related = ('utilisateur',)  # Optimise la requête
 
     def afficher_photo(self, obj):
         if obj.photo:
-            return mark_safe(f'<img src="{obj.photo.url}" width="50" height="50" style="object-fit: cover; border-radius: 50%;">')
+            return format_html(
+                '<img src="{}" width="50" height="50" style="object-fit: cover; border-radius: 50%;" />',
+                obj.photo.url
+            )
         return "Aucune"
     afficher_photo.short_description = "Photo"
-    afficher_photo.allow_tags = True
     afficher_photo.admin_order_field = 'photo'
-    afficher_photo.allow_tags = True
 
-admin.site.register(Article)
+    def lien_utilisateur(self, obj):
+        url = reverse("admin:auth_user_change", args=[obj.utilisateur.id])
+        return format_html('<a href="{}">{}</a>', url, obj.utilisateur.username)
+    lien_utilisateur.short_description = "Utilisateur"
