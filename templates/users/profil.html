@@ -1,21 +1,28 @@
 {% extends 'template_base.html' %}
+{% load static %}
+
 
 {% block contenu %}
 <div class="container mt-5">
-  <h2 class="mb-4">Bienvenue {{ user.username }}</h2>
+  <h2 class="mb-4">Mon Profil</h2>
 
-  {% if user.profil.photo %}
-    <img src="{{ user.profil.photo.url }}" class="rounded-circle mb-3" style="width:100px; height:100px; object-fit:cover;" alt="Photo de profil">
-  {% endif %}
-
-  <ul class="list-group">
-    <li class="list-group-item"><strong>Nom d'utilisateur :</strong> {{ user.username }}</li>
-    <li class="list-group-item"><strong>Email :</strong> {{ user.email }}</li>
-    <li class="list-group-item"><strong>Prénom :</strong> {{ user.first_name }}</li>
-    <li class="list-group-item"><strong>Nom :</strong> {{ user.last_name }}</li>
-  </ul>
-
-  <a href="{% url 'modifier_profil' %}" class="btn btn-primary mt-3">Modifier le profil</a>
+  <div class="card p-4 shadow-sm">
+    <div class="row">
+      <div class="col-md-4 text-center">
+        {% if profil.photo %}
+          <img src="{{ profil.photo.url }}" class="img-thumbnail rounded-circle mb-3" style="max-width: 150px;" alt="Photo de profil">
+        {% else %}
+          <img src="{% static 'default.jpg' %}" class="img-thumbnail rounded-circle mb-3" style="max-width: 150px;" alt="Photo par défaut">
+        {% endif %}
+      </div>
+      <div class="col-md-8">
+        <p><strong>Nom d'utilisateur :</strong> {{ user.username }}</p>
+        <p><strong>Email :</strong> {{ user.email }}</p>
+        <p><strong>Prénom :</strong> {{ user.first_name }}</p>
+        <p><strong>Nom :</strong> {{ user.last_name }}</p>
+        <a href="{% url 'modifier_profil' %}" class="btn btn-primary mt-2">Modifier le profil</a>
+      </div>
+    </div>
+  </div>
 </div>
 {% endblock %}
-
