@@ -1,0 +1,68 @@
+{% extends 'template_base.html' %}
+{% block titre %}Mes services - Développement Web{% endblock %}
+
+{% block contenu %}
+<div class="container mt-5">
+  <h1 class="mb-4">Mes Services</h1>
+  <p class="lead">Développeur web passionné, j’aide les entrepreneurs, freelances et petites entreprises à avoir un site web professionnel, rapide et sécurisé.</p>
+
+  <hr>
+
+  <div class="row">
+    <div class="col-md-6 mb-4">
+      <div class="card shadow-sm h-100">
+        <div class="card-body">
+          <h4 class="card-title">🌐 Création de site vitrine</h4>
+          <p class="card-text">
+            Un site professionnel 100% sur mesure, responsive (adapté mobile), optimisé pour le référencement. Idéal pour présenter vos services et gagner en crédibilité.
+          </p>
+          <ul>
+            <li>Design personnalisé</li>
+            <li>Formulaire de contact</li>
+            <li>Hébergement & nom de domaine (conseil inclus)</li>
+          </ul>
+          <p><strong>À partir de 350 €</strong></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6 mb-4">
+      <div class="card shadow-sm h-100">
+        <div class="card-body">
+          <h4 class="card-title">⚙️ Maintenance & optimisation</h4>
+          <p class="card-text">
+            Vous avez déjà un site ? Je propose des audits, corrections, ou mises à jour pour améliorer les performances, la sécurité et l’apparence.
+          </p>
+          <ul>
+            <li>Audit technique & SEO</li>
+            <li>Optimisation de vitesse</li>
+            <li>Correction d’erreurs (bugs, liens, formulaires...)</li>
+          </ul>
+          <p><strong>Sur devis</strong></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6 mb-4">
+      <div class="card shadow-sm h-100">
+        <div class="card-body">
+          <h4 class="card-title">🎯 Coaching technique</h4>
+          <p class="card-text">
+            Tu veux apprendre à coder ton site toi-même ? Je propose un accompagnement 100% personnalisé (HTML, CSS, Django, etc.).
+          </p>
+          <ul>
+            <li>Cours en ligne ou en visio</li>
+            <li>Adapté aux débutants</li>
+            <li>Support via email/WhatsApp</li>
+          </ul>
+          <p><strong>30 €/heure</strong></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="text-center mt-5">
+    <a href="{% url 'contact' %}" class="btn btn-primary btn-lg">Demander un devis gratuit</a>
+  </div>
+</div>
+{% endblock %}

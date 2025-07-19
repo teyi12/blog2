@@ -1,0 +1,52 @@
+{% extends 'template_base.html' %}
+{% load static %}
+{% block titre %}Portfolio{% endblock %}
+
+{% block contenu %}
+<div class="container mt-5">
+  <h2 class="mb-4 text-center">Mes projets récents</h2>
+
+  <div class="row row-cols-1 row-cols-md-3 g-4">
+    
+    <!-- Projet 1 -->
+    <div class="col">
+      <div class="card h-100 shadow">
+        <img src="{% static 'images/projet.png' %}" class="card-img-top" alt="Projet 1">
+        <div class="card-body">
+          <h5 class="card-title">Blog Django</h5>
+          <p class="card-text">Un blog moderne avec gestion d’articles, commentaires et espace admin personnalisé.</p>
+          <p><span class="badge bg-primary">Python</span> <span class="badge bg-success">Django</span> <span class="badge bg-dark">Bootstrap</span></p>
+          <a href="#" class="btn btn-outline-primary btn-sm mt-2 disabled">Voir le site</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Projet 2 -->
+    <div class="col">
+      <div class="card h-100 shadow">
+        <img src="{% static 'images/png.jpg' %}" class="card-img-top" alt="Projet 2">
+        <div class="card-body">
+          <h5 class="card-title">Site vitrine pour freelance</h5>
+          <p class="card-text">Un site élégant pour présenter les services d’un développeur freelance (responsive).</p>
+          <p><span class="badge bg-primary">HTML</span> <span class="badge bg-warning text-dark">CSS</span> <span class="badge bg-info text-dark">JavaScript</span></p>
+          <a href="#" class="btn btn-outline-primary btn-sm mt-2 disabled">Voir le site</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Projet 3 -->
+    <div class="col">
+      <div class="card h-100 shadow">
+        <img src="{% static 'images/png.jpg' %}" class="card-img-top" alt="Projet 3">
+        <div class="card-body">
+          <h5 class="card-title">Dashboard analytique</h5>
+          <p class="card-text">Tableau de bord dynamique avec visualisation de données et authentification sécurisée.</p>
+          <p><span class="badge bg-success">Django</span> <span class="badge bg-secondary">Chart.js</span> <span class="badge bg-dark">SQLite</span></p>
+          <a href="#" class="btn btn-outline-primary btn-sm mt-2 disabled">Voir le site</a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+{% endblock %}

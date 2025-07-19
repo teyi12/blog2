@@ -45,3 +45,11 @@ def contact_view(request):
 
 def remerciement_view(request):
     return HttpResponse("Merci de nous avoir contacté. Nous vous répondrons rapidement.")
+
+
+def services_view(request):
+    return render(request, 'services.html')
+
+def a_propos_view(request):
+    return render(request, 'a_propos.html')
+

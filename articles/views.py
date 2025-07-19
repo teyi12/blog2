@@ -1,8 +1,12 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.http import HttpResponse
 from django.urls import reverse
+from .models import Projet
+from .forms import ProjetForm
+from django.contrib.auth.decorators import login_required
+
 
 from .forms import ArticleForm 
 from .models import Article
@@ -24,6 +28,21 @@ def creer_view(request):
     return render(request, 'articles/creer.html', context={'form':form})
    
 
+
+def projets_liste(request):
+    projets = Projet.objects.all().order_by('-date_creation')
+    return render(request, 'projets/liste.html', {'projets': projets})
+
+@login_required
+def ajouter_projet(request):
+    if request.method == 'POST':
+        form = ProjetForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('projets')
+    else:
+        form = ProjetForm()
+    return render(request, 'projets/ajouter.html', {'form': form})
 
 
    

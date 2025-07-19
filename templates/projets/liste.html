@@ -1,0 +1,30 @@
+{% extends 'template_base.html' %}
+
+{% block contenu %}
+<div class="container mt-5">
+  <h2>Mes Projets</h2>
+
+  <a href="{% url 'ajouter_projet' %}" class="btn btn-primary mb-3">Ajouter un projet</a>
+
+  <div class="row">
+    {% for projet in projets %}
+      <div class="col-md-4 mb-4">
+        <div class="card">
+          {% if projet.image %}
+            <img src="{{ projet.image.url }}" class="card-img-top" alt="{{ projet.titre }}">
+          {% endif %}
+          <div class="card-body">
+            <h5 class="card-title">{{ projet.titre }}</h5>
+            <p class="card-text">{{ projet.description|truncatewords:20 }}</p>
+            {% if projet.lien %}
+              <a href="{{ projet.lien }}" class="btn btn-outline-primary" target="_blank">Voir</a>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    {% empty %}
+      <p>Aucun projet pour le moment.</p>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

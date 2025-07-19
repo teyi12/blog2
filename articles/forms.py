@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.models import User
-from .models import Article, Profil
+from .models import Article, Profil, Projet
 
 
 class ArticleForm(forms.ModelForm):
@@ -39,3 +39,15 @@ class ProfilForm(forms.ModelForm):
                 profil.utilisateur = self.user
                 profil.save()
         return profil
+
+
+class ProjetForm(forms.ModelForm):
+    class Meta:
+        model = Projet
+        fields = ['titre', 'description', 'image', 'lien']
+        widgets = {
+            'titre': forms.TextInput(attrs={'class': 'form-control'}),
+            'description': forms.Textarea(attrs={'class': 'form-control'}),
+            'lien': forms.URLInput(attrs={'class': 'form-control'}),
+            'image': forms.ClearableFileInput(attrs={'class': 'form-control'}),
+        }

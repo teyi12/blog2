@@ -1,0 +1,47 @@
+{% extends 'template_base.html' %}
+{% block titre %}À propos - Développeur Web Freelance{% endblock %}
+
+{% block contenu %}
+<div class="container mt-5">
+  <div class="row">
+    <div class="col-lg-8 mx-auto">
+      <h1 class="mb-4">À propos de moi</h1>
+
+      <p class="lead">
+        Bonjour 👋 Je m'appelle <strong>Teyi</strong>, passionné de développement web, et j’aide les indépendants, porteurs de projets et petites entreprises à créer une présence en ligne professionnelle.
+      </p>
+
+      <hr>
+
+      <h3 class="mt-4">💡 Pourquoi j’ai lancé ce blog</h3>
+      <p>
+        J’ai créé ce blog pour partager mes compétences en développement web, documenter mes projets, et aider ceux qui veulent comprendre et utiliser le web pour faire grandir leur activité.  
+        Aujourd’hui, je combine passion et profession pour proposer des services web simples, efficaces, et accessibles.
+      </p>
+
+      <h3 class="mt-4">🧰 Ce que je fais concrètement</h3>
+      <ul>
+        <li>Création de sites vitrines sur mesure (avec Django, HTML/CSS, Bootstrap...)</li>
+        <li>Optimisation et maintenance de sites existants</li>
+        <li>Accompagnement technique (coaching ou consulting)</li>
+      </ul>
+
+      <h3 class="mt-4">🤝 Mes valeurs</h3>
+      <ul>
+        <li><strong>Simplicité</strong> — des solutions claires et compréhensibles</li>
+        <li><strong>Transparence</strong> — un échange honnête et sans jargon</li>
+        <li><strong>Fiabilité</strong> — je respecte les délais et je reste disponible</li>
+      </ul>
+
+      <h3 class="mt-4">🚀 Mon objectif</h3>
+      <p>
+        Créer un lien de confiance avec mes clients et leur fournir les bons outils pour réussir en ligne. Si tu veux discuter de ton projet ou simplement dire bonjour, contacte-moi 😉
+      </p>
+
+      <div class="text-center mt-4">
+        <a href="{% url 'contact' %}" class="btn btn-primary btn-lg">Me contacter</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

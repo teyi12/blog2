@@ -4,7 +4,7 @@ from django.urls import path, include
 from django.contrib.auth import views as auth_views
 from django.conf import settings
 from django.conf.urls.static import static
-
+from django.views.generic import TemplateView
 from blog import views, views_auth
 
 urlpatterns = [
@@ -26,6 +26,13 @@ urlpatterns = [
     # Profil utilisateur
     path('profil/', views_auth.profil_view, name='profil'),
     path('profil/modifier/', views_auth.modifier_profil, name='modifier_profil'),
+    path('services/', views.services_view, name='services'),
+    path('a-propos/', views.a_propos_view, name='a_propos'),
+    path('a-propos/', views.a_propos_view, name='a_propos'),
+    path('portfolio/', TemplateView.as_view(template_name="portfolio.html"), name='portfolio'),
+    path('', include('articles.urls')),  # ou l'app où tu places tes projets
+
+
 ]
 
 # Pour servir les fichiers médias en développement
