@@ -1,34 +1,39 @@
-# Vérifier si Railway CLI est installé
+# === Synchronise les variables Railway dans un fichier .env ===
+
+Write-Host ""
+Write-Host "==> Synchronisation des variables Railway vers .env"
+
+# Vérifie si Railway CLI est installée
 if (-not (Get-Command "railway" -ErrorAction SilentlyContinue)) {
-    Write-Host "❌ Railway CLI non installée. Installez-la avec : npm install -g @railway/cli" -ForegroundColor Red
+    Write-Host "ERREUR : Railway CLI non trouvée. Installez-la avec : npm install -g @railway/cli"
     exit 1
 }
 
-# Définir le chemin du fichier .env de sortie
+# Définir le chemin du fichier .env
 $envFilePath = ".env"
-Write-Host "🔄 Récupération des variables Railway..."
 
-# Exécuter la commande Railway pour récupérer les variables
-$envVarsJson = railway variables | ConvertFrom-Json
+# Récupère les variables Railway au format JSON
+$envVarsJson = railway variables --json | ConvertFrom-Json
 
-# Si aucune variable n’est renvoyée
+# Vérifie s'il y a des données
 if (-not $envVarsJson) {
-    Write-Host "❌ Aucune variable récupérée. Es-tu bien dans un dossier Railway ?"
+    Write-Host "ERREUR : Aucune variable récupérée. Êtes-vous dans un projet Railway ?"
     exit 1
 }
 
-# Sauvegarder l’ancienne version
+# Sauvegarde du fichier .env existant
 if (Test-Path $envFilePath) {
     Copy-Item $envFilePath "$envFilePath.bak" -Force
-    Write-Host "📦 Backup créée : .env.bak"
+    Write-Host "Backup existant sauvegardé sous .env.bak"
 }
 
-# Écrire les variables dans le fichier .env
-Write-Host "`n📝 Écriture dans .env..."
-"" | Out-File -Encoding utf8 $envFilePath  # vide le fichier
+# Vide le fichier .env actuel
+"" | Out-File -Encoding ASCII $envFilePath
 
+# Écrit les variables dans le fichier .env
 foreach ($var in $envVarsJson) {
-    "$($var.key)=$($var.value)" | Out-File -Append -Encoding utf8 $envFilePath
+    "$($var.key)=$($var.value)" | Out-File -Append -Encoding ASCII $envFilePath
 }
 
-Write-Host "`n✅ Synchronisation terminée. Fichier .env mis à jour." -ForegroundColor Green
+Write-Host ""
+Write-Host "Succès : Le fichier .env a été mis à jour avec les variables Railway."
