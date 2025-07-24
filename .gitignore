@@ -6,34 +6,43 @@ __pycache__/
 *.pyc
 *.log
 
-# === Django-specific ===
-*.sqlite3
-*.db
-db.sqlite3
-media/
-.env
-
-# === Virtual environment ===
+# === Environnements virtuels ===
 venv/
 .venv/
 ENV/
 env/
 
-# === VS Code ===
-.vscode/
+# === Fichiers de configuration secrets ===
+.env
+.env.*     # ex: .env.production, .env.local
 
-# === Mac / Windows ===
-.DS_Store
-Thumbs.db
+# === Django ===
+*.sqlite3
+*.db
+db.sqlite3
+media/               # fichiers uploadés (sauf si gérés par Cloudinary)
+staticfiles/         # si collectstatic est utilisé
+local_settings.py    # si utilisé
 
-# === Migrations ===
+# === Migrations compilées ===
 */migrations/*.py
 !*/migrations/__init__.py
 
-# === Node/npm (si jamais utilisé pour frontend) ===
+# === IDE / éditeurs ===
+.vscode/
+.idea/               # JetBrains/PyCharm
+*.swp                # fichiers temporaires Vim
+
+# === OS Files ===
+.DS_Store
+Thumbs.db
+
+# === Node/npm ===
 node_modules/
 build/
 dist/
+package-lock.json
+yarn.lock
 
 # === Git ===
 .git/
