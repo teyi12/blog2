@@ -1,39 +1,49 @@
-# === Synchronise les variables Railway dans un fichier .env ===
+# === sync-env-railway.ps1 ===
+Write-Host "🔁 Synchronisation bi-directionnelle Railway ↔ .env" -ForegroundColor Cyan
 
-Write-Host ""
-Write-Host "==> Synchronisation des variables Railway vers .env"
-
-# Vérifie si Railway CLI est installée
-if (-not (Get-Command "railway" -ErrorAction SilentlyContinue)) {
-    Write-Host "ERREUR : Railway CLI non trouvée. Installez-la avec : npm install -g @railway/cli"
-    exit 1
-}
-
-# Définir le chemin du fichier .env
 $envFilePath = ".env"
 
-# Récupère les variables Railway au format JSON
-$envVarsJson = railway variables --json | ConvertFrom-Json
+# 1. Sauvegarde du .env existant
+if (Test-Path $envFilePath) {
+    $timestamp = Get-Date -Format "yyyyMMdd-HHmmss"
+    $backupPath = ".env.bak-$timestamp"
+    Copy-Item $envFilePath $backupPath
+    Write-Host "🗂️  Backup créé : $backupPath" -ForegroundColor DarkGray
+}
 
-# Vérifie s'il y a des données
-if (-not $envVarsJson) {
-    Write-Host "ERREUR : Aucune variable récupérée. Êtes-vous dans un projet Railway ?"
+# 2. Téléchargement des variables Railway vers .env
+Write-Host "`n⬇️  Import depuis Railway vers .env..." -ForegroundColor Cyan
+$variablesJson = railway variables | ConvertFrom-Json
+
+if (-not $variablesJson.variables) {
+    Write-Host "❌ Aucune variable trouvée. Le projet est-il bien lié avec 'railway link' ?" -ForegroundColor Red
     exit 1
 }
 
-# Sauvegarde du fichier .env existant
-if (Test-Path $envFilePath) {
-    Copy-Item $envFilePath "$envFilePath.bak" -Force
-    Write-Host "Backup existant sauvegardé sous .env.bak"
+@()
+$envLines = $variablesJson.variables | ForEach-Object {
+    "$($_.key)=$($_.value)"
+}
+$envLines | Set-Content $envFilePath -Encoding UTF8
+Write-Host "✅ Fichier .env mis à jour depuis Railway." -ForegroundColor Green
+
+# 3. Envoi de .env local vers Railway
+Write-Host "`n⬆️  Export de .env vers Railway..." -ForegroundColor Cyan
+$lines = Get-Content $envFilePath | Where-Object {
+    ($_ -notmatch '^\s*$') -and ($_ -notmatch '^\s*#')
 }
 
-# Vide le fichier .env actuel
-"" | Out-File -Encoding ASCII $envFilePath
-
-# Écrit les variables dans le fichier .env
-foreach ($var in $envVarsJson) {
-    "$($var.key)=$($var.value)" | Out-File -Append -Encoding ASCII $envFilePath
+foreach ($line in $lines) {
+    if ($line -match '^\s*([^=]+)\s*=\s*(.*)\s*$') {
+        $key = $matches[1].Trim()
+        $value = $matches[2].Trim()
+        $value = $value -replace '"', '\"'  # Échapper les guillemets
+        railway variables set "$key=$value" | Out-Null
+        Write-Host "→ $key=..." -ForegroundColor Yellow
+    }
+    else {
+        Write-Host "⚠️ Ligne ignorée (format invalide) : $line" -ForegroundColor DarkYellow
+    }
 }
 
-Write-Host ""
-Write-Host "Succès : Le fichier .env a été mis à jour avec les variables Railway."
+Write-Host "`n🎉 Synchronisation Railway <-> .env terminée avec succès." -ForegroundColor Green

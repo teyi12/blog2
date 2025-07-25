@@ -4,24 +4,30 @@ import sys
 from dotenv import load_dotenv
 import dj_database_url
 
-# Load .env
-load_dotenv()
-
-# BASE_DIR
+# === Base ===
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# SECRET_KEY
-SECRET_KEY = os.getenv('SECRET_KEY')
-if not SECRET_KEY:
-    raise Exception("❌ SECRET_KEY est manquant dans l'environnement.")
+# === .env : Chargement dynamique selon contexte ===
+default_env = BASE_DIR / ".env"
+local_env = BASE_DIR / ".env.local"
+env_file = local_env if local_env.exists() else default_env
+load_dotenv(dotenv_path=env_file)
 
-# DEBUG
+# === Fonction utilitaire pour les variables d’environnement ===
+def get_env(key, required=True, default=None):
+    value = os.getenv(key, default)
+    if required and value is None:
+        raise Exception(f"❌ Variable d'environnement manquante : {key}")
+    return value
+
+# === Clés sensibles ===
+SECRET_KEY = get_env('SECRET_KEY')
 DEBUG = os.getenv('DEBUG', 'False').lower() == 'true'
-
-# ALLOWED_HOSTS
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "").split(",")
+if not DEBUG and not any(ALLOWED_HOSTS):
+    raise Exception("❌ ALLOWED_HOSTS doit être défini en production.")
 
-# Application definition
+# === Applications ===
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -35,16 +41,20 @@ INSTALLED_APPS = [
     'articles.apps.ArticlesConfig',
 ]
 
-# Cloudinary (en prod uniquement)
+# === Cloudinary (prod uniquement) ===
 if not DEBUG:
+    cloud_name = get_env('CLOUD_NAME')
+    api_key = get_env('CLOUDINARY_API_KEY')
+    api_secret = get_env('CLOUDINARY_API_SECRET')
+
     DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
     CLOUDINARY_STORAGE = {
-        'CLOUD_NAME': os.getenv('CLOUD_NAME'),
-        'API_KEY': os.getenv('CLOUDINARY_API_KEY'),
-        'API_SECRET': os.getenv('CLOUDINARY_API_SECRET'),
+        'CLOUD_NAME': cloud_name,
+        'API_KEY': api_key,
+        'API_SECRET': api_secret,
     }
 
-# Middleware
+# === Middleware ===
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
@@ -56,14 +66,28 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-# Static files with Whitenoise
-STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+# === Sécurité renforcée en production ===
+if not DEBUG:
+    SECURE_SSL_REDIRECT = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SECURE_HSTS_SECONDS = 3600
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
 
-# URLs
+# === Fichiers statiques et médias ===
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+STATIC_URL = '/static/'
+STATICFILES_DIRS = [BASE_DIR / 'static']
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+
+# === URLs ===
 ROOT_URLCONF = 'blog.urls'
 WSGI_APPLICATION = 'blog.wsgi.application'
 
-# Templates
+# === Templates ===
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -80,73 +104,66 @@ TEMPLATES = [
     },
 ]
 
-# Database
-ENV = os.getenv("ENV", "development")
-
+# === Base de données ===
 DATABASE_URL = os.getenv("DATABASE_URL")
-
 if DATABASE_URL:
-    # Mode production Railway (DATABASE_URL défini)
     DATABASES = {
         'default': dj_database_url.parse(DATABASE_URL, conn_max_age=600)
     }
 else:
-    # Mode local avec valeurs séparées
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql',
-            'NAME': os.getenv('DB_NAME'),
-            'USER': os.getenv('DB_USER'),
-            'PASSWORD': os.getenv('DB_PASSWORD'),
-            'HOST': os.getenv('DB_HOST'),
+            'NAME': get_env('DB_NAME'),
+            'USER': get_env('DB_USER'),
+            'PASSWORD': get_env('DB_PASSWORD'),
+            'HOST': os.getenv('DB_HOST', 'localhost'),
             'PORT': os.getenv('DB_PORT', '5432'),
         }
     }
 
-
-# Auth password validation
+# === Validation de mot de passe ===
 AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
+    {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
 
-# Internationalization
+# === Internationalisation ===
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_TZ = True
 
-# Static & media files
-STATIC_URL = '/static/'
-STATICFILES_DIRS = [BASE_DIR / 'static']
-
-MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
-
-# Email settings (protégées)
+# === Email ===
 EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = '587'
+EMAIL_PORT = int(os.getenv("EMAIL_PORT", 587))
 EMAIL_USE_TLS = True
 EMAIL_USE_SSL = False
-EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
-EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
+EMAIL_HOST_USER = get_env("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = get_env("EMAIL_HOST_PASSWORD")
+DEFAULT_FROM_EMAIL = get_env("DEFAULT_FROM_EMAIL", required=False)
+CONTACT_EMAIL = get_env("CONTACT_EMAIL", required=False)
 
-DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL")
-CONTACT_EMAIL = os.getenv("CONTACT_EMAIL")
-
-# Auth redirects
+# === Auth redirects ===
 LOGIN_REDIRECT_URL = 'profil'
 LOGOUT_REDIRECT_URL = 'login'
 
-# Default PK
+# === Logging (basique mais utile en prod) ===
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'INFO',
+    },
+}
+
+# === Clé primaire auto ===
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
