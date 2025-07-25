@@ -2,7 +2,8 @@ from .base import *
 
 DEBUG = True
 ALLOWED_HOSTS = ["*"]
-SECRET_KEY = "django-insecure-dev-key"
+SECRET_KEY = os.getenv("SECRET_KEY", "django-insecure-dev-key")
+
 
 # Exemple DB locale
 DATABASES = {
